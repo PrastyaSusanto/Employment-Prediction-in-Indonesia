@@ -52,31 +52,27 @@ def main():
         # Create a DataFrame to store the results
         results = pd.DataFrame({'Date': pd.date_range(start=start_date, end=end_date).repeat(len(selected_options)), 'Option': option_list, 'Predicted Number': predictions})
 
-        # Format the predicted passenger values as integers
-        results['Predicted Number'] = results['Predicted Number'].astype(int)
+        # Format the Date column in the results DataFrame and remove time part
+        results['Date'] = results['Date'].dt.strftime('%d-%m-%Y')
 
         # Pivot the DataFrame to create separate columns for Employed and Unemployed
         pivot_results = results.pivot(index='Date', columns='Option', values='Predicted Number')
         pivot_results.columns = ['Employed', 'Unemployed']
 
-        # Visualize the results using two line charts
+        # Visualize the results using two line charts or one line chart if only one option selected
         plt.style.use('dark_background')
-        fig, axes = plt.subplots(2, 1, figsize=(10, 8))
-        for i, option in enumerate(selected_options):
-            axes[i].plot(pivot_results.index, pivot_results[option], label=option)
-            axes[i].set_xlabel('Date')
-            axes[i].set_ylabel('Predicted Number')
-            axes[i].spines['top'].set_visible(False)
-            axes[i].spines['right'].set_visible(False)
-            axes[i].set_title('Predicted Amount of {} over Time'.format(option))
-            axes[i].xaxis.set_major_locator(MaxNLocator(nbins=10))  # Set maximum number of x-axis ticks
-            axes[i].legend()
+        plt.figure(figsize=(10, 5))
+        for option in selected_options:
+            plt.plot(pivot_results.index, pivot_results[option], color='royalblue')
+        plt.xlabel('Date')
+        plt.ylabel('Predicted Number')
+        plt.xticks(rotation=90)
+        plt.gca().spines['top'].set_visible(False)
+        plt.gca().spines['right'].set_visible(False)
+        plt.title('Predicted Amount of Employed and Unemployed over Time')
+        plt.gca().xaxis.set_major_locator(MaxNLocator(nbins=10))  # Set maximum number of x-axis ticks
 
-        plt.tight_layout()
-        st.pyplot(fig)
-
-        # Format the Date column in the results DataFrame
-        results['Date'] = results['Date'].dt.strftime('%d-%m-%Y')
+        st.pyplot(plt)
 
         # Show the table with three columns: Date, Employed, and Unemployed
         st.dataframe(pivot_results)

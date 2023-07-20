@@ -61,19 +61,19 @@ def main():
 
         # Visualize the results using two line charts
         plt.style.use('dark_background')
-        plt.figure(figsize=(10, 5))
-        for option in selected_options:
-            plt.plot(pivot_results.index, pivot_results[option], label=option)
-        plt.xlabel('Date')
-        plt.ylabel('Predicted Number')
-        plt.xticks(rotation=90)
-        plt.gca().spines['top'].set_visible(False)
-        plt.gca().spines['right'].set_visible(False)
-        plt.title('Predicted Amount of Employed and Unemployed over Time')
-        plt.legend()
-        plt.gca().xaxis.set_major_locator(MaxNLocator(nbins=10))  # Set maximum number of x-axis ticks
+        fig, axes = plt.subplots(2, 1, figsize=(10, 8))
+        for i, option in enumerate(selected_options):
+            axes[i].plot(pivot_results.index, pivot_results[option], label=option)
+            axes[i].set_xlabel('Date')
+            axes[i].set_ylabel('Predicted Number')
+            axes[i].spines['top'].set_visible(False)
+            axes[i].spines['right'].set_visible(False)
+            axes[i].set_title('Predicted Amount of {} over Time'.format(option))
+            axes[i].xaxis.set_major_locator(MaxNLocator(nbins=10))  # Set maximum number of x-axis ticks
+            axes[i].legend()
 
-        st.pyplot(plt)
+        plt.tight_layout()
+        st.pyplot(fig)
 
         # Format the Date column in the results DataFrame
         results['Date'] = results['Date'].dt.strftime('%d-%m-%Y')

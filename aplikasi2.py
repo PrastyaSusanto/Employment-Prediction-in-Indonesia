@@ -60,16 +60,15 @@ def main():
             option_name = selected_options[0]
             pivot_results = results.pivot(index='Date', columns='Option', values='Predicted Number')
             pivot_results.columns = [option_name]
+            plt.plot(pivot_results.index, pivot_results[option_name], color='royalblue')
         else:
             # Pivot the DataFrame to create separate columns for Employed and Unemployed
             pivot_results = results.pivot(index='Date', columns='Option', values='Predicted Number')
             pivot_results.columns = ['Employed', 'Unemployed']
+            plt.plot(pivot_results.index, pivot_results['Employed'], color='royalblue')
+            plt.plot(pivot_results.index, pivot_results['Unemployed'], color='white')
 
-        # Visualize the results using two line charts or one line chart if only one option selected
-        plt.style.use('dark_background')
-        plt.figure(figsize=(10, 5))
-        for option in selected_options:
-            plt.plot(pivot_results.index, pivot_results[option], color='royalblue')
+        # Visualize the results using one or two line charts
         plt.xlabel('Date')
         plt.ylabel('Predicted Number')
         plt.xticks(rotation=90)
@@ -81,7 +80,7 @@ def main():
             plt.title('Predicted Amount of Employed and Unemployed over Time')
         plt.gca().xaxis.set_major_locator(MaxNLocator(nbins=10))  # Set maximum number of x-axis ticks
 
-        st.pyplot(plt)
+        st.pyplot()
 
         # Show the table with three columns: Date, Employed, and Unemployed
         st.dataframe(pivot_results)

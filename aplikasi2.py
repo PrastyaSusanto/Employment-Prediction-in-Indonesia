@@ -31,7 +31,7 @@ def main():
 
         data = {
             'Tanggal Referensi': pd.date_range(start=start_date, end=end_date).repeat(len(selected_options)),
-            'Option': option_list
+            'Option': [0 if option == 'Employed' else 1 for option in option_list]
         }
         data = pd.DataFrame(data)
 

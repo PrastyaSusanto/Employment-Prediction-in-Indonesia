@@ -55,9 +55,15 @@ def main():
         # Format the Date column in the results DataFrame and remove time part
         results['Date'] = results['Date'].dt.strftime('%d-%m-%Y')
 
-        # Pivot the DataFrame to create separate columns for Employed and Unemployed
-        pivot_results = results.pivot(index='Date', columns='Option', values='Predicted Number')
-        pivot_results.columns = ['Employed', 'Unemployed']
+        # If only one option is selected, adjust the column name accordingly
+        if len(selected_options) == 1:
+            option_name = selected_options[0]
+            pivot_results = results.pivot(index='Date', columns='Option', values='Predicted Number')
+            pivot_results.columns = [option_name]
+        else:
+            # Pivot the DataFrame to create separate columns for Employed and Unemployed
+            pivot_results = results.pivot(index='Date', columns='Option', values='Predicted Number')
+            pivot_results.columns = ['Employed', 'Unemployed']
 
         # Visualize the results using two line charts or one line chart if only one option selected
         plt.style.use('dark_background')
@@ -69,7 +75,10 @@ def main():
         plt.xticks(rotation=90)
         plt.gca().spines['top'].set_visible(False)
         plt.gca().spines['right'].set_visible(False)
-        plt.title('Predicted Amount of Employed and Unemployed over Time')
+        if len(selected_options) == 1:
+            plt.title('Predicted Amount of {} over Time'.format(option_name))
+        else:
+            plt.title('Predicted Amount of Employed and Unemployed over Time')
         plt.gca().xaxis.set_major_locator(MaxNLocator(nbins=10))  # Set maximum number of x-axis ticks
 
         st.pyplot(plt)

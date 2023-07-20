@@ -23,14 +23,9 @@ def main():
     submit = form.form_submit_button("Predict")  # Add a submit button
 
     if submit:
-        data = {
-            'Kode Tipe': [1 if option == 'Unemployed' else 0 for option in selected_options],
-            'Tanggal Referensi': pd.date_range(start=start_date, end=end_date).to_list()
-        }
-        data = pd.DataFrame(data)
-
-        # Convert Tanggal column to datetime and calculate the difference from the reference date
-        data['Tanggal Referensi'] = (pd.to_datetime(data['Tanggal Referensi']) - pd.to_datetime('2011-02-01')).dt.days
+        data = pd.DataFrame({'Tanggal Referensi': pd.date_range(start=start_date, end=end_date)})
+        data['Kode Tipe'] = data['Tanggal Referensi'].apply(lambda date: 1 if 'Unemployed' in selected_options else 0)
+        data['Tanggal Referensi'] = (data['Tanggal Referensi'] - pd.to_datetime('2011-02-01')).dt.days
 
         # Load the model from the pickle file
         with open('model.pkl', 'rb') as f:

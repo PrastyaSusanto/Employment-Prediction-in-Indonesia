@@ -13,7 +13,7 @@ def main():
     st.set_page_config(layout="centered", page_icon='🏢💻', page_title='Lets Predicting the number of workers and employed population')
     st.title(title)
     st.write(subtitle)
-    st.write("For more information about this project, check here: [GitHub Repo](https://github.com/PrastyaSusanto/Commuter-Prediction-App/tree/main)")
+    st.write("For more information about this project, check here: [GitHub Repo](https://github.com/PrastyaSusanto/Employment-Prediction-in-Indonesia/tree/main")
 
     form = st.form("Data Input")
     Option = form.selectbox('Employed/Unemployed', ['Employed', 'Unemployed'])

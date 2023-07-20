@@ -24,9 +24,14 @@ def main():
     submit = form.form_submit_button("Predict")  # Add a submit button
 
     if submit:
+        # Create a list to store the selected 'Option' for each date
+        option_list = []
+        for date in pd.date_range(start=start_date, end=end_date):
+            option_list.extend(selected_options)
+
         data = {
-            'Tanggal Referensi': pd.date_range(start=start_date, end=end_date),
-            'Option': selected_options * len(pd.date_range(start=start_date, end=end_date))
+            'Tanggal Referensi': pd.date_range(start=start_date, end=end_date).repeat(len(selected_options)),
+            'Option': option_list
         }
         data = pd.DataFrame(data)
 
@@ -45,7 +50,7 @@ def main():
         predictions = model.predict(data_poly)
 
         # Create a DataFrame to store the results
-        results = pd.DataFrame({'Date': pd.date_range(start=start_date, end=end_date), 'Predicted Number': predictions})
+        results = pd.DataFrame({'Date': pd.date_range(start=start_date, end=end_date).repeat(len(selected_options)), 'Predicted Number': predictions})
 
         # Format the predicted passenger values as integers
         results['Predicted Number'] = results['Predicted Number'].astype(int)

@@ -50,20 +50,27 @@ def main():
         predictions = model.predict(data_poly)
 
         # Create a DataFrame to store the results
-        results = pd.DataFrame({'Date': pd.date_range(start=start_date, end=end_date).repeat(len(selected_options)), 'Predicted Number': predictions})
+        results = pd.DataFrame({'Date': pd.date_range(start=start_date, end=end_date).repeat(len(selected_options)), 'Option': option_list, 'Predicted Number': predictions})
 
         # Format the predicted passenger values as integers
         results['Predicted Number'] = results['Predicted Number'].astype(int)
 
-        # Visualize the results using matplotlib
+        # Pivot the DataFrame to create separate columns for Employed and Unemployed
+        pivot_results = results.pivot(index='Date', columns='Option', values='Predicted Number')
+        pivot_results.columns = ['Employed', 'Unemployed']
+
+        # Visualize the results using two line charts
         plt.style.use('dark_background')
-        plt.plot(results['Date'], results['Predicted Number'], color='royalblue')
+        plt.figure(figsize=(10, 5))
+        for option in selected_options:
+            plt.plot(pivot_results.index, pivot_results[option], label=option)
         plt.xlabel('Date')
         plt.ylabel('Predicted Number')
         plt.xticks(rotation=90)
         plt.gca().spines['top'].set_visible(False)
         plt.gca().spines['right'].set_visible(False)
         plt.title('Predicted Amount of Employed and Unemployed over Time')
+        plt.legend()
         plt.gca().xaxis.set_major_locator(MaxNLocator(nbins=10))  # Set maximum number of x-axis ticks
 
         st.pyplot(plt)
@@ -71,7 +78,8 @@ def main():
         # Format the Date column in the results DataFrame
         results['Date'] = results['Date'].dt.strftime('%d-%m-%Y')
 
-        st.dataframe(results)
+        # Show the table with three columns: Date, Employed, and Unemployed
+        st.dataframe(pivot_results)
 
 if __name__ == '__main__':
     main()
